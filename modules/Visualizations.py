@@ -6,7 +6,7 @@ def showNumpyAsImg(array):
     Visualizes a single channel numpy array as a matplotlib plot.
     
     Keyword Arguments:
-    array: A 2D numpy array representing an image.
+    array: A 3 x 224 x 224 numpy array representing an image.
     
     Returns None
     """

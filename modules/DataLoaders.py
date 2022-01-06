@@ -18,12 +18,10 @@ def defineDataTransform(flag, transform = None):
     
     if flag == "train":
         return transforms.Compose([transforms.RandomRotation(30), 
-                                   transforms.RandomResizedCrop(224), 
                                    transforms.RandomHorizontalFlip(),
                                    transforms.ToTensor()])
     elif flag == "test":
         return transforms.Compose([transforms.RandomRotation(30), 
-                                   transforms.RandomResizedCrop(224), 
                                    transforms.ToTensor()])
     else:
         raise Exception("Unknown flag input. Can only be train or test.")
