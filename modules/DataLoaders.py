@@ -27,16 +27,22 @@ def defineDataTransform(flag, transform = None):
         raise Exception("Unknown flag input. Can only be train or test.")
     
 
-def createDataLoader(path, transform, batch_size):
+def createDataLoader(path, transform, batch_size = 32, test_loader = False):
     """
     Creates a dataloader for the train, validation, or test data.
     
     Keyword Arguments:
     path: string representing the path from current directory to root folder of data.
     transform: a transforms.Compose() to apply to all data in the loader.
-    batch_size: an int representing the batch size for the machine learning model.
+    batch_size: an int representing the batch size for the machine learning model, 32 by default.
+    test_loader: if True, returns a dataloader that puts the entire dataset into one batch.
+    
+    Returns the dataloader specified by the transform.
     """
     
     data = datasets.ImageFolder(path, transform = transform)
     
-    return torch.utils.data.DataLoader(data, batch_size = batch_size)
+    if test_loader:
+        return torch.utils.data.DataLoader(data, batch_size = len(data))
+    else:
+        return torch.utils.data.DataLoader(data, batch_size = batch_size, shuffle = True)
