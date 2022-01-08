@@ -43,7 +43,7 @@ def evaluateNetwork(model, dataloader):
     
     for batch in dataloader:
         features, labels = batch
-        _, preds = torch.max(softmax(model(features.float())), dim = 1)
+        _, preds = torch.max(softmax(model(features)), dim = 1)
         print(metrics.confusion_matrix(labels, preds))
         print(metrics.classification_report(labels, preds, digits = 5))
         
