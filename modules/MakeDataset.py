@@ -29,7 +29,7 @@ def createDirectories():
     """
     Creates the necessary folders for storing rock, paper, and scissors examples.
     """
-    # REMOVE ../ later
+    
     directories = [
         "data",
         "data/rps-train",
@@ -41,11 +41,12 @@ def createDirectories():
         "data/rps-test/paper",
         "data/rps-test/scissors"
     ]
+    
     try:
         for k in range(len(directories)):
             os.makedirs(directories[k])
     except:
-        pass
+        raise Exception("Training folders already exist.")
 
 def recordExamples(record_type, path, n_examples):
     """
@@ -60,15 +61,16 @@ def recordExamples(record_type, path, n_examples):
 
     camera = cv2.VideoCapture(0)
     coordinates, fontScale, thickness, font, color = (5, 18), 0.45, 2, cv2.FONT_HERSHEY_SIMPLEX, (0, 255, 0)
+    all_matrices = []
     
     result = input(f"Type 'y' to begin recording {record_type} examples: ")
     
     if result == "y":
         count = 0
-        while count < 50:
+        while count < 10:
             success, img = camera.read()
             img = rescaleImg(img)
-            arrayToImg(img, path, str(count))
+            all_matrices.append(img)
             
             img = cv2.putText(img, f"n_examples: {count + 1}", coordinates, font, fontScale, color, thickness)
             cv2.imshow("Recording Window", img)
@@ -79,6 +81,10 @@ def recordExamples(record_type, path, n_examples):
             
         camera.release()
         cv2.destroyAllWindows()
+        
+        print("Saving images...")
+        for idx, image in enumerate(all_matrices):
+            arrayToImg(image, path, str(idx))
         
 def createDataSet(flag, n_imgs_per_class = {"train": 500, "test": 150}):
     """
@@ -99,8 +105,9 @@ def createDataSet(flag, n_imgs_per_class = {"train": 500, "test": 150}):
         }
     except:
         raise Exception("Flag can only be one of \"train\" or \"test.\"")
-    
-    createDirectories()
+        
+    if flag == "train":
+        createDirectories()
     
     for key, value in paths.items():
         recordExamples(key, value, n_examples)
