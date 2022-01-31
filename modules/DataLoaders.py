@@ -22,6 +22,7 @@ def defineDataTransform(flag, transform = None):
                                    transforms.ToTensor()])
     elif flag == "test":
         return transforms.Compose([transforms.RandomRotation(30), 
+                                   transforms.RandomHorizontalFlip(),
                                    transforms.ToTensor()])
     else:
         raise Exception("Unknown flag input. Can only be train or test.")
@@ -35,7 +36,7 @@ def createDataLoader(path, transform, batch_size = 32, test_loader = False):
     path: string representing the path from current directory to root folder of data.
     transform: a transforms.Compose() to apply to all data in the loader.
     batch_size: an int representing the batch size for the machine learning model, 32 by default.
-    test_loader: if True, returns a dataloader that puts the entire dataset into one batch.
+    test_loader: if True, returns a dataloader that puts the entire dataset into one batch for the test set.
     
     Returns the dataloader specified by the transform.
     """

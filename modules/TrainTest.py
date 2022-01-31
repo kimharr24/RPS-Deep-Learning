@@ -2,13 +2,13 @@ import torch.nn as nn
 import torch
 from sklearn import metrics
 
-def trainNetwork(model, dataloader, n_epochs, optimizer, criterion = nn.CrossEntropyLoss()):
+def trainNetwork(model, train_loader, n_epochs, optimizer, criterion = nn.CrossEntropyLoss()):
     """
     Runs a training loop on the provided model.
     
     Keyword Arguments:
     model: an instance of the user-defined neural network.
-    dataloader: PyTorch DataLoader to iterate through batches.
+    train_loader: PyTorch DataLoader to iterate through training batches.
     n_epochs: number of epochs to run the training loop.
     optimizer: optimizer used for gradient descent.
     criterion: loss function used to compute gradients.
@@ -16,7 +16,7 @@ def trainNetwork(model, dataloader, n_epochs, optimizer, criterion = nn.CrossEnt
     
     for epoch in range(n_epochs):
         total_loss = 0
-        for batch in dataloader:
+        for batch in train_loader:
             features, labels = batch
             
             optimizer.zero_grad()
@@ -26,8 +26,8 @@ def trainNetwork(model, dataloader, n_epochs, optimizer, criterion = nn.CrossEnt
             
             optimizer.step()
             total_loss += loss.item()
-            
-        print(f'Epoch {epoch + 1}, Loss: {total_loss}, Final Batch Loss: {loss.item()}')
+        
+        print(f'Epoch {epoch + 1}, Loss: {total_loss}')
         
 def evaluateNetwork(model, dataloader):
     """

@@ -1,6 +1,7 @@
 import cv2
 from PIL import Image
 import os
+from cvzone.SelfiSegmentationModule import SelfiSegmentation
 
 def arrayToImg(arr, path, file_name):
     """
@@ -24,7 +25,14 @@ def rescaleImg(img, dim = (300, 300)):
     dim: the (m x n) pixel dimensions to be converted to.
     """
     return cv2.resize(img, dim)
+
+def removeBackground(img):
     
+    segmentor = SelfiSegmentation()
+    img = segmentor.removeBG(img, (255, 255, 255), threshold = 0.55)
+    
+    return img
+
 def createDirectories():
     """
     Creates the necessary folders for storing rock, paper, and scissors examples.
@@ -53,7 +61,6 @@ def recordExamples(record_type, path, n_examples):
     Given the path to the appropriate directory, saves webcam example images.
 
     Keyword Arguments:
-    flag: a string that can be one of "train" or "test" to indicate which recording phase the user is in.
     record_type: a string that can be one of "rock" "paper" or "scissors."
     path: a string representing the path to which the examples images are saved.
     n_examples: an int representing the number of examples to record.
@@ -67,7 +74,7 @@ def recordExamples(record_type, path, n_examples):
     
     if result == "y":
         count = 0
-        while count < 10:
+        while count < n_examples:
             success, img = camera.read()
             img = rescaleImg(img)
             all_matrices.append(img)
@@ -84,6 +91,7 @@ def recordExamples(record_type, path, n_examples):
         
         print("Saving images...")
         for idx, image in enumerate(all_matrices):
+            image = removeBackground(image)
             arrayToImg(image, path, str(idx))
         
 def createDataSet(flag, n_imgs_per_class = {"train": 500, "test": 150}):
@@ -92,7 +100,7 @@ def createDataSet(flag, n_imgs_per_class = {"train": 500, "test": 150}):
     images as examples.
     
     Keyword Arguments
-    flag: a string that can be one of "train" or "test", depending on which dataset is being generated.
+    flag: a string that can be one of "train" or "test" depending on which dataset is being generated.
     n_imgs_per_class: hashmap that can be used to customize train-test split if specified.
     """
     
