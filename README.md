@@ -18,7 +18,7 @@ model = CNN()
 optimizer = optim.Adam(model.parameters(), lr = learning_rate, weight_decay = regularization)
 trainNetwork(model, train_loader, n_epochs, optimizer)
 ```
-the run file will automatically train a CNN with the provided hyperparameters and image dataset.
+the program file will automatically train a CNN with the provided hyperparameters and image dataset.
 
 ## Evaluating The Model
 Once the model has finished training, users should run
@@ -27,4 +27,4 @@ model = CNN()
 loadModel(model, f'{model_name}_{batch_size}BS_{learning_rate}LR_{n_epochs}E')
 evaluateNetwork(model, test_loader)
 ```
-to evaluate how effective their model is at distinguishing between rock, paper, and scissors. An average weighted F1 score close to 1.00 is desirable. After tuning the model, users can now use the CNN to play a game of rock paper scissors.
+to evaluate how effective their model is at distinguishing between rock, paper, and scissors. An average weighted F1 score closest to 1.00 is desirable. After tuning the model, users can use the CNN to play a game of rock paper scissors.
