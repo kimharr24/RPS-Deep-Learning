@@ -6,7 +6,7 @@ def defineDataTransform(flag, transform = None):
     Defines a series of transformations to apply to all images in the dataset.
     
     Keyword Arguments:
-    flag: a string which is either "train" or "test." Applies transforms based on input.
+    flag: a string which is either "train," "val", or "test." Applies transforms based on input.
     transforms: an array of sequential transform operations. If not supplied, default transforms for
     train and test will be used.
     
@@ -20,15 +20,14 @@ def defineDataTransform(flag, transform = None):
         return transforms.Compose([transforms.RandomRotation(30), 
                                    transforms.RandomHorizontalFlip(),
                                    transforms.ToTensor()])
-    elif flag == "test":
+    elif flag == "test" or flag == "val":
         return transforms.Compose([transforms.RandomRotation(30), 
                                    transforms.RandomHorizontalFlip(),
                                    transforms.ToTensor()])
     else:
         raise Exception("Unknown flag input. Can only be train or test.")
     
-
-def createDataLoader(path, transform, batch_size = 32, test_loader = False):
+def createDataLoader(path, transform, batch_size = 32, test_loader = False, val_loader = False):
     """
     Creates a dataloader for the train, validation, or test data.
     
@@ -37,6 +36,7 @@ def createDataLoader(path, transform, batch_size = 32, test_loader = False):
     transform: a transforms.Compose() to apply to all data in the loader.
     batch_size: an int representing the batch size for the machine learning model, 32 by default.
     test_loader: if True, returns a dataloader that puts the entire dataset into one batch for the test set.
+    val_loader: if True, returns a dataloader with batches for the val set.
     
     Returns the dataloader specified by the transform.
     """

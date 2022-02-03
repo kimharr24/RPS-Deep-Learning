@@ -2,13 +2,27 @@ import torch.nn as nn
 import torch
 from sklearn import metrics
 
-def trainNetwork(model, train_loader, n_epochs, optimizer, criterion = nn.CrossEntropyLoss()):
+def validationLoss(model, val_loader, criterion):
+    validation_loss = 0
+    model.eval()
+    
+    for batch in val_loader:
+        features, labels = batch
+        preds = model(features)
+        loss = criterion(preds, labels)
+        
+        validation_loss += loss.item()
+    
+    return validation_loss
+
+def trainNetwork(model, train_loader, val_loader, n_epochs, optimizer, criterion = nn.CrossEntropyLoss()):
     """
     Runs a training loop on the provided model.
     
     Keyword Arguments:
     model: an instance of the user-defined neural network.
     train_loader: PyTorch DataLoader to iterate through training batches.
+    val_loader: PyTorch DataLoader to conduct validation loss
     n_epochs: number of epochs to run the training loop.
     optimizer: optimizer used for gradient descent.
     criterion: loss function used to compute gradients.
@@ -16,6 +30,8 @@ def trainNetwork(model, train_loader, n_epochs, optimizer, criterion = nn.CrossE
     
     for epoch in range(n_epochs):
         total_loss = 0
+        model.train() # Setting the model to train mode because validationLoss sets to eval mode
+        
         for batch in train_loader:
             features, labels = batch
             
@@ -27,7 +43,9 @@ def trainNetwork(model, train_loader, n_epochs, optimizer, criterion = nn.CrossE
             optimizer.step()
             total_loss += loss.item()
         
-        print(f'Epoch {epoch + 1}, Loss: {total_loss}')
+        epoch_val_loss = validationLoss(model, val_loader, criterion)
+        
+        print(f'Epoch {epoch + 1}, Loss: {total_loss:.3f}, Validation Loss {epoch_val_loss:.3f}')
         
 def evaluateNetwork(model, dataloader):
     """
