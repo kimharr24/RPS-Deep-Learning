@@ -3,28 +3,7 @@ from PIL import Image
 import os
 import numpy as np
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
-from skimage.transform import rotate
-from skimage.util import random_noise
-from skimage.filters import gaussian
-from scipy import ndimage
 
-def imageAugmentation(img):
-    """
-    Applies vertical/horizontal reflections, rotations, and blurring to the supplied image.
-    
-    Keyword Arguments:
-    img: the image to be transformed.
-    """
-    
-    transformations = {
-        "rotation": rotate(img, angle = 45, mode = "wrap"),
-        "horizontal_flip": np.fliplr(img), 
-        "vertical_flip": np.flipud(img),
-        "blur": random_noise(img, var = 0.2 ** 2)
-    }
-    
-    return transformations
-    
 def arrayToImg(arr, path, file_name):
     """
     Converts a numpy array to an image and saves it at the provided path.
@@ -35,11 +14,8 @@ def arrayToImg(arr, path, file_name):
     file_name: name of the image.
     """
     arr = cv2.cvtColor(arr, cv2.COLOR_BGR2RGB) #Conversion from OpenCV's default BGR to RGB
-    transformations = imageAugmentation(arr)
-    
-    for rotation_type, transformed_img in transformations.items():
-        img = Image.fromarray((transformed_img * 255).astype(np.uint8))
-        img.save(f'{path}{file_name}{rotation_type}.png')    
+    img = Image.fromarray(arr)
+    img.save(f'{path}{file_name}.png')    
     
 def rescaleImg(img, dim = (300, 300)):
     """
@@ -130,7 +106,7 @@ def recordExamples(record_type, path, n_examples):
         print("Saving images and adding augmentation...")
         for idx, image in enumerate(all_matrices):
             image = removeBackground(image)
-            arrayToImg(image, path, str(idx)) # Save the original image
+            arrayToImg(image, path, str(idx))
         
 def createDataSet(flag, n_imgs_per_class = {"train": 500, "val": 150, "test": 150}):
     """
