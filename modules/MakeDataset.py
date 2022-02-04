@@ -7,30 +7,13 @@ from skimage.transform import rotate
 from skimage.util import random_noise
 from skimage.filters import gaussian
 from scipy import ndimage
-import matplotlib.pyplot as plt
 
-def showNumpyAsImg(array):
-    """
-    Visualizes a single channel numpy array as a matplotlib plot.
-    
-    Keyword Arguments:
-    array: A 3 x 224 x 224 numpy array representing an image.
-    
-    Returns None
-    """
-    array = np.transpose(array, (1,2,0)) # Converting 3 x 224 x 224 img to 224 x 224 x 3 img
-    
-    figure = plt.figure
-    plt.imshow(array)
-    plt.show()
-    
 def imageAugmentation(img):
     """
     Applies vertical/horizontal reflections, rotations, and blurring to the supplied image.
     
     Keyword Arguments:
     img: the image to be transformed.
-
     """
     
     transformations = {
@@ -52,12 +35,11 @@ def arrayToImg(arr, path, file_name):
     file_name: name of the image.
     """
     arr = cv2.cvtColor(arr, cv2.COLOR_BGR2RGB) #Conversion from OpenCV's default BGR to RGB
-    
     transformations = imageAugmentation(arr)
     
     for rotation_type, transformed_img in transformations.items():
         img = Image.fromarray((transformed_img * 255).astype(np.uint8))
-        img.save(f'{path}{file_name}{rotation_type}.png')
+        img.save(f'{path}{file_name}{rotation_type}.png')    
     
 def rescaleImg(img, dim = (300, 300)):
     """
