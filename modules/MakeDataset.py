@@ -1,8 +1,47 @@
 import cv2
 from PIL import Image
 import os
+import numpy as np
 from cvzone.SelfiSegmentationModule import SelfiSegmentation
+from skimage.transform import rotate
+from skimage.util import random_noise
+from skimage.filters import gaussian
+from scipy import ndimage
+import matplotlib.pyplot as plt
 
+def showNumpyAsImg(array):
+    """
+    Visualizes a single channel numpy array as a matplotlib plot.
+    
+    Keyword Arguments:
+    array: A 3 x 224 x 224 numpy array representing an image.
+    
+    Returns None
+    """
+    array = np.transpose(array, (1,2,0)) # Converting 3 x 224 x 224 img to 224 x 224 x 3 img
+    
+    figure = plt.figure
+    plt.imshow(array)
+    plt.show()
+    
+def imageAugmentation(img):
+    """
+    Applies vertical/horizontal reflections, rotations, and blurring to the supplied image.
+    
+    Keyword Arguments:
+    img: the image to be transformed.
+
+    """
+    
+    transformations = {
+        "rotation": rotate(img, angle = 45, mode = "wrap"),
+        "horizontal_flip": np.fliplr(img), 
+        "vertical_flip": np.flipud(img),
+        "blur": random_noise(img, var = 0.2 ** 2)
+    }
+    
+    return transformations
+    
 def arrayToImg(arr, path, file_name):
     """
     Converts a numpy array to an image and saves it at the provided path.
@@ -13,8 +52,12 @@ def arrayToImg(arr, path, file_name):
     file_name: name of the image.
     """
     arr = cv2.cvtColor(arr, cv2.COLOR_BGR2RGB) #Conversion from OpenCV's default BGR to RGB
-    img = Image.fromarray(arr)
-    img.save(f'{path}{file_name}.png')
+    
+    transformations = imageAugmentation(arr)
+    
+    for rotation_type, transformed_img in transformations.items():
+        img = Image.fromarray((transformed_img * 255).astype(np.uint8))
+        img.save(f'{path}{file_name}{rotation_type}.png')
     
 def rescaleImg(img, dim = (300, 300)):
     """
@@ -102,10 +145,10 @@ def recordExamples(record_type, path, n_examples):
         camera.release()
         cv2.destroyAllWindows()
         
-        print("Saving images...")
+        print("Saving images and adding augmentation...")
         for idx, image in enumerate(all_matrices):
             image = removeBackground(image)
-            arrayToImg(image, path, str(idx))
+            arrayToImg(image, path, str(idx)) # Save the original image
         
 def createDataSet(flag, n_imgs_per_class = {"train": 500, "val": 150, "test": 150}):
     """
