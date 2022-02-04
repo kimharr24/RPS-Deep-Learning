@@ -23,11 +23,20 @@ def rescaleImg(img, dim = (300, 300)):
     Keyword Arguments
     img: the image to be transformed.
     dim: the (m x n) pixel dimensions to be converted to.
+    
+    Returns the scaled image.
     """
     return cv2.resize(img, dim)
 
 def removeBackground(img):
+    """
+    Removes the background of an image in OpenCV.
     
+    Keyword Arguments
+    img: the image to remove the background from.
+    
+    Returns the image with the background removed.
+    """
     segmentor = SelfiSegmentation()
     img = segmentor.removeBG(img, (255, 255, 255), threshold = 0.55)
     
@@ -42,9 +51,13 @@ def createDirectories():
         "data",
         "data/rps-train",
         "data/rps-test",
+        "data/rps-val",
         "data/rps-train/rock",
         "data/rps-train/paper",
         "data/rps-train/scissors",
+        "data/rps-val/rock",
+        "data/rps-val/paper",
+        "data/rps-val/scissors",
         "data/rps-test/rock",
         "data/rps-test/paper",
         "data/rps-test/scissors"
@@ -94,13 +107,13 @@ def recordExamples(record_type, path, n_examples):
             image = removeBackground(image)
             arrayToImg(image, path, str(idx))
         
-def createDataSet(flag, n_imgs_per_class = {"train": 500, "test": 150}):
+def createDataSet(flag, n_imgs_per_class = {"train": 500, "val": 150, "test": 150}):
     """
     Automatically creates a dataset of images per class, using the user's
     images as examples.
     
     Keyword Arguments
-    flag: a string that can be one of "train" or "test" depending on which dataset is being generated.
+    flag: a string that can be one of "train," "val," or "test" depending on which dataset is being generated.
     n_imgs_per_class: hashmap that can be used to customize train-test split if specified.
     """
     
@@ -112,7 +125,7 @@ def createDataSet(flag, n_imgs_per_class = {"train": 500, "test": 150}):
             "scissors": f"data/rps-{flag}/scissors/"
         }
     except:
-        raise Exception("Flag can only be one of \"train\" or \"test.\"")
+        raise Exception("Flag can only be one of \"train\" \"test\" or \"val\"")
         
     if flag == "train":
         createDirectories()
