@@ -3,6 +3,16 @@ import torch
 from sklearn import metrics
 
 def validationLoss(model, val_loader, criterion):
+    """
+    Computes the validation loss of the model on the current epoch.
+    
+    Keyword Arguments:
+    model: an instance of the user-defined neural network.
+    val_loader: PyTorch DataLoader to conduct validation loss.
+    criterion: loss function used to compute gradients.
+    
+    Returns a floating point number that represents the validation loss on the epoch.
+    """
     validation_loss = 0
     model.eval()
     
@@ -22,7 +32,7 @@ def trainNetwork(model, train_loader, val_loader, n_epochs, optimizer, criterion
     Keyword Arguments:
     model: an instance of the user-defined neural network.
     train_loader: PyTorch DataLoader to iterate through training batches.
-    val_loader: PyTorch DataLoader to conduct validation loss
+    val_loader: PyTorch DataLoader to conduct validation loss.
     n_epochs: number of epochs to run the training loop.
     optimizer: optimizer used for gradient descent.
     criterion: loss function used to compute gradients.
