@@ -27,7 +27,7 @@ def defineDataTransform(flag, transform = None):
     else:
         raise Exception("Unknown flag input. Can only be train or test.")
     
-def createDataLoader(path, transform, batch_size = 32, test_loader = False, val_loader = False):
+def createDataLoader(path, transform, batch_size = 32, test_loader = False, val_loader = False, get_label_mappings = False):
     """
     Creates a dataloader for the train, validation, or test data.
     
@@ -42,6 +42,9 @@ def createDataLoader(path, transform, batch_size = 32, test_loader = False, val_
     """
     
     data = datasets.ImageFolder(path, transform = transform)
+    
+    if get_label_mappings:
+        return data.class_to_idx
     
     if test_loader:
         return torch.utils.data.DataLoader(data, batch_size = len(data))
